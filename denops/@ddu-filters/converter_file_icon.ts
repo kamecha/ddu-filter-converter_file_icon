@@ -28,8 +28,24 @@ export class Filter extends BaseFilter<Params> {
 	}): Promise<DduItem[]> {
 		for (const item of args.items) {
 			const fileName = basename(item.word);
-			const iconData = this.getIcon(fileName);
+			const iconData: IconData = this.getIcon(fileName);
+			// set icon
 			item.display = `${iconData.icon} ${item.word}`;
+			// 受け取ったitemのハイライトを上書きする
+			const highlights: ItemHighlight[] = item.highlights ?? [];
+			// filterParamsのpromptの文字列の長さを取得
+			const width = await fn.strwidth(args.denops, iconData.icon) as number;
+			const hl_group = `ddu_file_icon_${iconData.hl_group}`;
+			highlights.push({
+				name: "ddu_file_icon",
+				hl_group: hl_group,
+				// itemのprefixが勝手にとられてるくさくて、その対処にcolを3(マジックナンバー)にしている
+				col: 3,
+				width: width,
+			});
+			item.highlights = highlights;
+			const color = iconData.color.startsWith("!") ? iconData.color.slice(1) : iconData.color;
+			await args.denops.cmd(`hi default link ${hl_group} ${color}`);
 		}
 		return Promise.resolve(args.items);
 	}

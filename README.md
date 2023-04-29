@@ -1,7 +1,7 @@
 # ddu-filter-converter_file_icon
 add icon for file.
 
-Inspired by [ddu-column-icon_filename](https://github.com/ryota2357/ddu-column-icon_filename)
+Highly inspired by [ddu-column-icon_filename](https://github.com/ryota2357/ddu-column-icon_filename)
 
 ## Required
 

@@ -36,6 +36,7 @@ export class Filter extends BaseFilter<Params> {
 			item.display = `${iconData.icon} ${item.word}`;
 			// 受け取ったitemのハイライトを上書きする
 			const highlights: ItemHighlight[] = item.highlights ?? [];
+			const promptPrefix = args.filterParams.prompt ?? "";
 			// filterParamsのpromptの文字列の長さを取得
 			const width = await fn.strwidth(args.denops, iconData.icon) as number;
 			const hl_group = `ddu_file_icon_${iconData.hl_group}`;
@@ -43,7 +44,8 @@ export class Filter extends BaseFilter<Params> {
 				name: "ddu_file_icon",
 				hl_group: hl_group,
 				// itemのprefixが勝手にとられてるくさくて、その対処にcolを3(マジックナンバー)にしている
-				col: 3,
+				// filter windowのpromptの幅(現在の設定だと2)の分だけprefixとなるみたい
+				col: promptPrefix.length + 1,
 				width: width,
 			});
 			item.highlights = highlights;

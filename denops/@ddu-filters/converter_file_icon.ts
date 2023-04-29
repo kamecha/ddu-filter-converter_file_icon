@@ -4,14 +4,16 @@ import {
 	SourceOptions,
 	ItemHighlight,
 } from "https://deno.land/x/ddu_vim@v2.0.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v2.0.0/deps.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.0.0/deps.ts";
 import {
 	basename,
 	extname,
 	relative,
 } from "https://deno.land/std@0.183.0/path/mod.ts";
 
-type Params = Record<never, never>;
+type Params = {
+	prompt?: string;
+};
 
 type IconData = {
 	icon: string;
@@ -23,6 +25,7 @@ export class Filter extends BaseFilter<Params> {
 	override async filter(args: {
 		denops: Denops;
 		sourceOptions: SourceOptions;
+		filterParams: Params;
 		input: string;
 		items: DduItem[];
 	}): Promise<DduItem[]> {
@@ -47,7 +50,7 @@ export class Filter extends BaseFilter<Params> {
 			const color = iconData.color.startsWith("!") ? iconData.color.slice(1) : iconData.color;
 			await args.denops.cmd(`hi default link ${hl_group} ${color}`);
 		}
-		return Promise.resolve(args.items);
+		return args.items;
 	}
 
 	override params(): Params {
@@ -63,12 +66,31 @@ export class Filter extends BaseFilter<Params> {
 			return {
 				icon: "",
 				hl_group: "file_unknown",
-				color: palette.default,
+				color: palette.aqua,
 			};
 		}
 	}
 
 }
+
+const defaultColors = new Map<string, string>([
+  ["default", "Normal"],
+  ["aqua", "#3AFFDB"],
+  ["beige", "#F5C06F"],
+  ["blue", "#689FB6"],
+  ["brown", "#905532"],
+  ["darkBlue", "#44788E"],
+  ["darkOrange", "#F16529"],
+  ["green", "#8FAA54"],
+  ["lightGreen", "#31B53E"],
+  ["lightPurple", "#834F79"],
+  ["orange", "#D4843E"],
+  ["pink", "#CB6F6F"],
+  ["purple", "#834F79"],
+  ["red", "#AE403F"],
+  ["salmon", "#EE6E73"],
+  ["yellow", "#F09F17"],
+]);
 
 // for preventing typo
 const palette = {

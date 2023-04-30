@@ -5,12 +5,11 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddu_vim@v2.8.3/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.3/deps.ts";
-import {
-  basename,
-  extname,
-} from "https://deno.land/std@0.185.0/path/mod.ts";
+import { basename, extname } from "https://deno.land/std@0.185.0/path/mod.ts";
 
-type Params = Record<string, never>;
+type Params = {
+  padding: number;
+};
 
 type IconData = {
   icon: string;
@@ -37,8 +36,8 @@ export class Filter extends BaseFilter<Params> {
     for (const item of args.items) {
       const iconData: IconData = this.getIcon(basename(item.word));
       // Set icon
-      item.display = `${iconData.icon} ${item.word}`;
-
+      const padding = " ".repeat(args.filterParams.padding);
+      item.display = `${padding}${iconData.icon} ${item.word}`;
       // Overwrite highlights
       const highlights: ItemHighlight[] = item.highlights?.filter((hl) =>
         hl.name != "ddu_file_icon"
@@ -48,7 +47,7 @@ export class Filter extends BaseFilter<Params> {
       highlights.push({
         name: "ddu_file_icon",
         hl_group,
-        col: 1,
+        col: args.filterParams.padding + 1,
         width,
       });
       item.highlights = highlights;
@@ -62,7 +61,9 @@ export class Filter extends BaseFilter<Params> {
   }
 
   override params(): Params {
-    return {};
+    return {
+      padding: 1,
+    };
   }
 
   private getIcon(fileName: string): IconData {

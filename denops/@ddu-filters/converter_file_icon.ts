@@ -26,6 +26,14 @@ export class Filter extends BaseFilter<Params> {
     input: string;
     items: DduItem[];
   }): Promise<DduItem[]> {
+    for (const [group, color] of defaultColors) {
+      if (color.startsWith("#")) {
+        await args.denops.cmd(`highlight ${group} guibg=bg guifg=${color}`);
+      } else {
+        await args.denops.cmd(`highlight default link ${group} ${color}`);
+      }
+    }
+
     for (const item of args.items) {
       const iconData: IconData = this.getIcon(basename(item.word));
       // Set icon
@@ -39,7 +47,7 @@ export class Filter extends BaseFilter<Params> {
       const hl_group = `ddu_file_icon_${iconData.hl_group}`;
       highlights.push({
         name: "ddu_file_icon",
-        hl_group: "Statement",
+        hl_group,
         col: 1,
         width,
       });
@@ -48,7 +56,7 @@ export class Filter extends BaseFilter<Params> {
       const color = iconData.color.startsWith("!")
         ? iconData.color.slice(1)
         : iconData.color;
-      await args.denops.cmd(`hi default link ${hl_group} ${color}`);
+      await args.denops.cmd(`highlight default link ${hl_group} ${color}`);
     }
     return args.items;
   }

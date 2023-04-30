@@ -20,6 +20,8 @@ https://github.com/Shougo/ddu.vim
 ## Configuration
 
 ```vim
+set termguicolors
+
 call ddu#custom#patch_global(#{
     \   sourceOptions: #{
     \     _: #{

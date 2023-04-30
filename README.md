@@ -1,9 +1,11 @@
 # ddu-filter-converter_file_icon
+
 NOTE: WIP plugin
 
 add icon for file.
 
-Highly inspired by [ddu-column-icon_filename](https://github.com/ryota2357/ddu-column-icon_filename)
+Highly inspired by
+[ddu-column-icon_filename](https://github.com/ryota2357/ddu-column-icon_filename)
 
 ## Required
 
@@ -16,13 +18,11 @@ ddu.vim
 https://github.com/Shougo/ddu.vim
 
 ## Configuration
+
 ```vim
+set termguicolors
+
 call ddu#custom#patch_global(#{
-    \   filterParams: #{
-    \     converter_file_icon: # {
-    \       prompt: '> ',
-    \     },
-    \   },
     \   sourceOptions: #{
     \     _: #{
     \       matchers: ['matcher_substring'],
@@ -30,4 +30,4 @@ call ddu#custom#patch_global(#{
     \     },
     \   }
     \ })
- ```
+```

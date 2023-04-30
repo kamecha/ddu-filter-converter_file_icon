@@ -1,78 +1,75 @@
 import {
-	BaseFilter,
-	DduItem,
-	SourceOptions,
-	ItemHighlight,
-} from "https://deno.land/x/ddu_vim@v2.0.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.0.0/deps.ts";
+  BaseFilter,
+  DduItem,
+  ItemHighlight,
+  SourceOptions,
+} from "https://deno.land/x/ddu_vim@v2.8.3/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.3/deps.ts";
 import {
-	basename,
-	extname,
-	relative,
-} from "https://deno.land/std@0.183.0/path/mod.ts";
+  basename,
+  extname,
+} from "https://deno.land/std@0.185.0/path/mod.ts";
 
-type Params = {
-	prompt?: string;
-};
+type Params = Record<string, never>;
 
 type IconData = {
-	icon: string;
-	hl_group: string;
-	color: string;
+  icon: string;
+  hl_group: string;
+  color: string;
 };
 
 export class Filter extends BaseFilter<Params> {
-	override async filter(args: {
-		denops: Denops;
-		sourceOptions: SourceOptions;
-		filterParams: Params;
-		input: string;
-		items: DduItem[];
-	}): Promise<DduItem[]> {
-		for (const item of args.items) {
-			const fileName = basename(item.word);
-			const iconData: IconData = this.getIcon(fileName);
-			// set icon
-			item.display = `${iconData.icon} ${item.word}`;
-			// 受け取ったitemのハイライトを上書きする
-			const highlights: ItemHighlight[] = item.highlights ?? [];
-			const promptPrefix = args.filterParams.prompt ?? "";
-			// filterParamsのpromptの文字列の長さを取得
-			const width = await fn.strwidth(args.denops, iconData.icon) as number;
-			const hl_group = `ddu_file_icon_${iconData.hl_group}`;
-			highlights.push({
-				name: "ddu_file_icon",
-				hl_group: hl_group,
-				// itemのprefixが勝手にとられてるくさくて、その対処にcolを3(マジックナンバー)にしている
-				// filter windowのpromptの幅(現在の設定だと2)の分だけprefixとなるみたい
-				col: promptPrefix.length + 1,
-				width: width,
-			});
-			item.highlights = highlights;
-			const color = iconData.color.startsWith("!") ? iconData.color.slice(1) : iconData.color;
-			await args.denops.cmd(`hi default link ${hl_group} ${color}`);
-		}
-		return args.items;
-	}
+  override async filter(args: {
+    denops: Denops;
+    sourceOptions: SourceOptions;
+    filterParams: Params;
+    input: string;
+    items: DduItem[];
+  }): Promise<DduItem[]> {
+    for (const item of args.items) {
+      const iconData: IconData = this.getIcon(basename(item.word));
+      // Set icon
+      item.display = `${iconData.icon} ${item.word}`;
 
-	override params(): Params {
-		return {};
-	}
+      // Overwrite highlights
+      const highlights: ItemHighlight[] = item.highlights?.filter((hl) =>
+        hl.name != "ddu_file_icon"
+      ) ?? [];
+      const width = await fn.strlen(args.denops, iconData.icon) as number;
+      const hl_group = `ddu_file_icon_${iconData.hl_group}`;
+      highlights.push({
+        name: "ddu_file_icon",
+        hl_group: "Statement",
+        col: 1,
+        width,
+      });
+      item.highlights = highlights;
 
-	private getIcon(fileName: string): IconData {
-		const extention = extname(fileName).slice(1);
-		const iconData = fileIcons.get(extention);
-		if (iconData) {
-			return iconData;
-		} else {
-			return {
-				icon: "",
-				hl_group: "file_unknown",
-				color: palette.aqua,
-			};
-		}
-	}
+      const color = iconData.color.startsWith("!")
+        ? iconData.color.slice(1)
+        : iconData.color;
+      await args.denops.cmd(`hi default link ${hl_group} ${color}`);
+    }
+    return args.items;
+  }
 
+  override params(): Params {
+    return {};
+  }
+
+  private getIcon(fileName: string): IconData {
+    const extention = extname(fileName).slice(1);
+    const iconData = fileIcons.get(extention);
+    if (iconData) {
+      return iconData;
+    } else {
+      return {
+        icon: "",
+        hl_group: "file_unknown",
+        color: palette.aqua,
+      };
+    }
+  }
 }
 
 const defaultColors = new Map<string, string>([
@@ -94,24 +91,24 @@ const defaultColors = new Map<string, string>([
   ["yellow", "#F09F17"],
 ]);
 
-// for preventing typo
+// For preventing typo
 const palette = {
-	default: "!default",
-	aqua: "!aqua",
-	beige: "!beige",
-	blue: "!blue",
-	brown: "!brown",
-	darkBlue: "!darkBlue",
-	darkOrange: "!darkOrange",
-	green: "!green",
-	lightGreen: "!lightGreen",
-	lightPurple: "!lightPurple",
-	orange: "!orange",
-	pink: "!pink",
-	purple: "!purple",
-	red: "!red",
-	salmon: "!salmon",
-	yellow: "!yellow",
+  default: "!default",
+  aqua: "!aqua",
+  beige: "!beige",
+  blue: "!blue",
+  brown: "!brown",
+  darkBlue: "!darkBlue",
+  darkOrange: "!darkOrange",
+  green: "!green",
+  lightGreen: "!lightGreen",
+  lightPurple: "!lightPurple",
+  orange: "!orange",
+  pink: "!pink",
+  purple: "!purple",
+  red: "!red",
+  salmon: "!salmon",
+  yellow: "!yellow",
 };
 
 // deno-fmt-ignore-start
@@ -203,7 +200,7 @@ const fileIcons = new Map<string, IconData>([                                   
 	["xls",    { icon: "", hl_group: "file_xls",    color: palette.lightGreen  }], // nf-fa-file_excel_o
 	["xlsx",   { icon: "", hl_group: "file_xlsx",   color: palette.lightGreen  }], // nf-fa-file_excel_o
 	["yaml",   { icon: "", hl_group: "file_yaml",   color: palette.default     }], // nf-dev-aptana
-["yml",    { icon: "", hl_group: "file_yml",    color: palette.default     }], // nf-dev-aptana
+	["yml",    { icon: "", hl_group: "file_yml",    color: palette.default     }], // nf-dev-aptana
 	["zip",    { icon: "", hl_group: "file_zip",    color: palette.default     }], // nf-oct-file_zip
 	["zsh",    { icon: "", hl_group: "file_zsh",    color: palette.default     }], // nf-dev-terminal
 ]);

@@ -25,19 +25,12 @@ export class Filter extends BaseFilter<Params> {
     input: string;
     items: DduItem[];
   }): Promise<DduItem[]> {
-    for (const [group, color] of defaultColors) {
-      if (color.startsWith("#")) {
-        await args.denops.cmd(`highlight ${group} guibg=bg guifg=${color}`);
-      } else {
-        await args.denops.cmd(`highlight default link ${group} ${color}`);
-      }
-    }
-
     for (const item of args.items) {
-      const iconData: IconData = this.getIcon(basename(item.word));
       // Set icon
+      const iconData: IconData = this.getIcon(basename(item.word));
       const padding = " ".repeat(args.filterParams.padding);
       item.display = `${padding}${iconData.icon} ${item.word}`;
+
       // Overwrite highlights
       const highlights: ItemHighlight[] = item.highlights?.filter((hl) =>
         hl.name != "ddu_file_icon"
@@ -52,10 +45,16 @@ export class Filter extends BaseFilter<Params> {
       });
       item.highlights = highlights;
 
+      // Set highlight color
       const color = iconData.color.startsWith("!")
-        ? iconData.color.slice(1)
+        ? defaultColors.get(iconData.color.slice(1)) ??
+          defaultColors.get("default")!
         : iconData.color;
-      await args.denops.cmd(`highlight default link ${hl_group} ${color}`);
+      if (color.startsWith("#")) {
+        await args.denops.cmd(`highlight default ${hl_group} guifg=${color}`);
+      } else {
+        await args.denops.cmd(`highlight default link ${hl_group} ${color}`);
+      }
     }
     return args.items;
   }

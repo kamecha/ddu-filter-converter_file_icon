@@ -21,11 +21,6 @@ https://github.com/Shougo/ddu.vim
 
 ```vim
 call ddu#custom#patch_global(#{
-    \   filterParams: #{
-    \     converter_file_icon: # {
-    \       prompt: '> ',
-    \     },
-    \   },
     \   sourceOptions: #{
     \     _: #{
     \       matchers: ['matcher_substring'],

@@ -66,9 +66,12 @@ export class Filter extends BaseFilter<Params> {
   }
 
   private getIcon(fileName: string): IconData {
+    const buildin = specialIcons.get(fileName.toLowerCase());
     const extention = extname(fileName).slice(1);
     const iconData = fileIcons.get(extention);
-    if (iconData) {
+    if (buildin) {
+      return buildin;
+    } else if (iconData) {
       return iconData;
     } else {
       return {
@@ -118,6 +121,28 @@ const palette = {
   salmon: "!salmon",
   yellow: "!yellow",
 };
+
+// deno-fmt-ignore-start
+const specialIcons = new Map<string, IconData>([                                               // nerd font class name
+  [".ds_store",           { icon: "", hl_group: "sp_ds_store",    color: palette.default    }], // nf-dev-aptana
+  [".editorconfig",       { icon: "", hl_group: "sp_editorconfig",color: palette.default    }], // nf-dev-aptana
+  [".gitignore",          { icon: "", hl_group: "sp_gitignore",   color: palette.darkOrange }], // nf-dev-git
+  [".gitconfig",          { icon: "", hl_group: "sp_gitconfig",   color: palette.default    }], // nf-dev-aptana
+  [".gitlab-ci.yml",      { icon: "", hl_group: "sp_gitlab_ci",   color: palette.default    }], // nf-fa-gitlab
+  ["config.ru",           { icon: "", hl_group: "sp_config_ru",   color: palette.default    }], // nf-dev-ruby
+  ["dockerfile",          { icon: "", hl_group: "sp_license",     color: palette.blue       }], // nf-dev-docker
+  ["docker-compose.yml",  { icon: "", hl_group: "sp_license",     color: palette.yellow     }], // nf-dev-docker
+  ["docker-compose.yaml", { icon: "", hl_group: "sp_license",     color: palette.yellow     }], // nf-dev-docker
+  ["favicon.ico",         { icon: "", hl_group: "sp_favicon",     color: palette.yellow     }], // nf-seti-favicon
+  ["makefile",            { icon: "", hl_group: "sp_gitconfig",   color: palette.default    }], // nf-dev-aptana
+  ["license",             { icon: "", hl_group: "sp_license",     color: palette.default    }], // nf-seti-license
+  ["license.txt",         { icon: "", hl_group: "sp_license",     color: palette.default    }], // nf-seti-license
+  ["readme",              { icon: "", hl_group: "sp_readme",      color: palette.yellow     }], // nf-seti-markdown
+  ["readme.md",           { icon: "", hl_group: "sp_readme",      color: palette.yellow     }], // nf-seti-markdown
+  ["changelog",           { icon: "", hl_group: "sp_changelog",   color: palette.green      }], // nf-fa-history
+  ["changelog.md",        { icon: "", hl_group: "sp_changelog",   color: palette.green      }], // nf-fa-history
+]);
+// deno-fmt-ignore-end
 
 // deno-fmt-ignore-start
 const fileIcons = new Map<string, IconData>([                                    // nerd font class name

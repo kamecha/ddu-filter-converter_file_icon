@@ -22,7 +22,11 @@ export class Filter extends BaseFilter<Params> {
   }): Promise<DduItem[]> {
     for (const item of args.items) {
       // Set icon
-      const iconData: IconData = this.getIcon(basename(item.word));
+      const iconData: IconData = await this.getIcon(
+        args.denops,
+        args.filterParams.icon,
+        basename(item.word),
+      );
       const padding = " ".repeat(args.filterParams.padding);
       item.display = `${padding}${iconData.icon} ${item.word}`;
 
@@ -64,21 +68,47 @@ export class Filter extends BaseFilter<Params> {
     };
   }
 
-  private getIcon(fileName: string): IconData {
-    const buildin = specialIcons.get(fileName.toLowerCase());
-    const extention = extname(fileName).slice(1);
-    const iconData = fileIcons.get(extention);
-    if (buildin) {
-      return buildin;
-    } else if (iconData) {
-      return iconData;
-    } else {
-      return {
-        icon: "",
-        hl_group: "file_unknown",
-        color: palette.aqua,
-      };
+  private async getIcon(
+    denops: Denops,
+    iconSource: Params["icon"],
+    fileName: string,
+  ): Promise<IconData> {
+    let iconData: IconData = {
+      icon: "",
+      hl_group: "file_unknown",
+      color: palette.aqua,
+    };
+    switch (iconSource) {
+      case "built-in":
+        iconData = fileIcons.get(extname(fileName).slice(1)) ?? iconData;
+        iconData = specialIcons.get(fileName.toLowerCase()) ?? iconData;
+        break;
+      case "nvim-web-devicons":
+        try {
+          iconData.icon = ensureString(
+            await denops.call(
+              "ddu#filter#converter#file_icon#get_icon",
+              fileName,
+            ),
+          );
+          iconData.hl_group = ensureString(
+            await denops.call(
+              "ddu#filter#converter#file_icon#get_icon_highlight",
+              fileName,
+            ),
+          );
+          iconData.color = ensureString(
+            await denops.call(
+              "ddu#filter#converter#file_icon#get_icon_color",
+              fileName,
+            ),
+          );
+        } catch (_e) {
+          // NOTE: ignore error
+        }
+        break;
     }
+    return iconData;
   }
 }
 

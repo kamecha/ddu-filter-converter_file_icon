@@ -1,11 +1,5 @@
-import {
-  BaseFilter,
-  DduItem,
-  ItemHighlight,
-  SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.8.3/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.3/deps.ts";
-import { basename, extname } from "https://deno.land/std@0.185.0/path/mod.ts";
+import type { DduItem, Denops, ItemHighlight, SourceOptions } from "../deps.ts";
+import { BaseFilter, basename, extname, fn } from "../deps.ts";
 
 type Params = {
   padding: number;

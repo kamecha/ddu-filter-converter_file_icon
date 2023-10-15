@@ -35,12 +35,15 @@ export class Filter extends BaseFilter<Params> {
       const highlights: ItemHighlight[] = item.highlights?.filter((hl) =>
         hl.name != "ddu_file_icon"
       ) ?? [];
+      const col = args.filterParams.padding + 1;
       const width = await fn.strlen(args.denops, iconData.icon) as number;
+      const offset = col + width;
+      highlights.forEach((hl) => hl.col += offset);
       const hl_group = `ddu_file_icon_${iconData.hl_group}`;
       highlights.push({
         name: "ddu_file_icon",
         hl_group,
-        col: args.filterParams.padding + 1,
+        col,
         width,
       });
       item.highlights = highlights;

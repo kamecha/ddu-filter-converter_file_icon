@@ -3,6 +3,7 @@ import { BaseFilter, basename, extname, fn } from "../deps.ts";
 
 type Params = {
   padding: number;
+  icon: "built-in" | "nvim-web-devicons";
 };
 
 type IconData = {
@@ -59,6 +60,7 @@ export class Filter extends BaseFilter<Params> {
   override params(): Params {
     return {
       padding: 1,
+      icon: "built-in",
     };
   }
 

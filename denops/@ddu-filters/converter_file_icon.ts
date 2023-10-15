@@ -1,5 +1,5 @@
 import type { DduItem, Denops, ItemHighlight, SourceOptions } from "../deps.ts";
-import { BaseFilter, basename, extname, fn } from "../deps.ts";
+import { BaseFilter, basename, ensureString, extname, fn } from "../deps.ts";
 
 type Params = {
   padding: number;

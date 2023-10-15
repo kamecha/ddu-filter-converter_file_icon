@@ -3,7 +3,7 @@ import { BaseFilter, basename, ensureString, extname, fn } from "../deps.ts";
 
 type Params = {
   padding: number;
-  icon: "built-in" | "nvim-web-devicons";
+  source: "built-in" | "nvim-web-devicons";
 };
 
 type IconData = {
@@ -24,7 +24,7 @@ export class Filter extends BaseFilter<Params> {
       // Set icon
       const iconData: IconData = await this.getIcon(
         args.denops,
-        args.filterParams.icon,
+        args.filterParams.source,
         basename(item.word),
       );
       const padding = " ".repeat(args.filterParams.padding);
@@ -64,13 +64,13 @@ export class Filter extends BaseFilter<Params> {
   override params(): Params {
     return {
       padding: 1,
-      icon: "built-in",
+      source: "built-in",
     };
   }
 
   private async getIcon(
     denops: Denops,
-    iconSource: Params["icon"],
+    iconSource: Params["source"],
     fileName: string,
   ): Promise<IconData> {
     let iconData: IconData = {

@@ -38,7 +38,9 @@ export class Filter extends BaseFilter<Params> {
       const width = await fn.strlen(args.denops, iconData.icon) as number;
       const offset = col + width;
       highlights.forEach((hl) => hl.col += offset);
-      const hl_group = `ddu_file_icon_${iconData.hl_group}`;
+      const hl_group = await fn.hlexists(args.denops, iconData.hl_group)
+        ? iconData.hl_group
+        : `ddu_file_icon_${iconData.hl_group}`;
       highlights.push({
         name: "ddu_file_icon",
         hl_group,
